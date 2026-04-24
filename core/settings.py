@@ -26,8 +26,8 @@ ALLOWED_HOSTS = ['*']
 # --- DEFINIÇÃO DE APLICATIVOS ---
 INSTALLED_APPS = [
     'cloudinary_storage',
-    'django.contrib.staticfiles',
     'cloudinary',
+    'django.contrib.staticfiles',
     'rest_framework',
     'users',
     'posts',
@@ -45,7 +45,6 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.getenv('API_SECRET'),
 }
 
-# Define que o Cloudinary gerenciará os uploads de mídia
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MIDDLEWARE = [
