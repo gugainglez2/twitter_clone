@@ -1,41 +1,22 @@
-# Twitter Clone MVP 🐦
+# 🐦 Twitter Clone MVP - Gustavo Inglez
 
-Projeto Final de Web Development focado em arquitetura monolítica com Django.
+Projeto desenvolvido para conclusão de módulo, focado em Full Stack Development com Django.
 
-## 🚀 Funcionalidades
-- **Autenticação:** Cadastro e Login de usuários.
-- **Microblogging:** Criação de Tweets (280 caracteres).
-- **Social:** Sistema de Follow (Seguir/Deixar de seguir).
-- **Interações:** Curtidas e Comentários em tempo real.
-- **Perfil:** Edição de foto, bio e dados pessoais.
+## 🚀 Tecnologias
+- **Back-end:** Django (Arquitetura Monolítica)
+- **Front-end:** Django Templates + Tailwind CSS (via CDN)
+- **Banco de Dados:** PostgreSQL (Produção) / SQLite (Desenvolvimento)
+- **Deploy:** Render via Docker
 
-## 🛠️ Tech Stack
-- **Back-end:** Python / Django (Monolítico)
-- **Banco de Dados:** PostgreSQL
-- **Estilização:** Tailwind CSS (via CDN)
-- **Deploy:** Render + Docker
+## 🛠️ Requisitos Atendidos (7/10+)
+- [x] **Autenticação:** Sistema completo de cadastro e login.
+- [x] **Tweets:** CRUD de postagens com limite de caracteres.
+- [x] **Social:** Sistema de Seguir (Follow) e Feed personalizado.
+- [x] **Interações:** Curtidas e Comentários funcionais.
+- [x] **Perfil:** Edição de dados do usuário e foto de perfil.
 
-## 📦 Como rodar localmente (Docker)
-1. Clone o repositório.
-2. Crie um arquivo `.env` baseado no modelo.
-3. Rode `docker-compose up --build`.
-4. Acesse `localhost:8000`.
-
-## Deploy no Render
-
-Este projeto usa PostgreSQL no Render. Como o plano FREE permite apenas um banco, criei um schema separado chamado `twitter_clone`.
-
-### Variáveis de ambiente
-- SECRET_KEY
-- DEBUG
-- DJANGO_ALLOWED_HOSTS
-- SQL_ENGINE=django.db.backends.postgresql
-- SQL_DATABASE=<nome_do_banco_existente>
-- SQL_USER=<usuário>
-- SQL_PASSWORD=<senha>
-- SQL_HOST=<host>
-- SQL_PORT=5432
-
-### Dockerfile
-O comando final roda migrações e inicia o servidor:
-CMD ["sh", "-c", "python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:8000"]
+## 📦 Como rodar este projeto
+1. Clone o repositório: `git clone https://github.com/gugainglez2/twitter_clone.git`
+2. Instale as dependências: `pip install -r requirements.txt`
+3. Execute as migrações: `python manage.py migrate`
+4. Inicie o servidor: `python manage.py runserver`
