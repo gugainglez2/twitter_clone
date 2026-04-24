@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
+        <form method="post">
+            {% csrf_token %}
+            <textarea name="content" rows="3" 
+                class="w-full p-2 border border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500" 
+                placeholder="O que está acontecendo?" required></textarea>
+            <div class="flex justify-end mt-2">
+                <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-600">
+                    Tweetar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="space-y-4">
+        {% for tweet in tweets %}
+            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="font-bold text-gray-900">@{{ tweet.user.username }}</span>
+                        {% if tweet.user != user %}
+                            <a href="{% url 'posts:follow' tweet.user.username %}" class="ml-2 text-xs font-semibold {% if tweet.user in user.following.all %}text-red-500{% else %}text-blue-500{% endif %} hover:underline">
+                                {% if tweet.user in user.following.all %}[Parar de seguir]{% else %}[Seguir]{% endif %}
+                            </a>
+                        {% endif %}
+                        <span class="text-gray-500 text-sm">· {{ tweet.created_at|timesince }}</span>
+                        <p class="mt-2 text-gray-800">{{ tweet.content }}</p>
+                    </div>
+                </div>
+                
+                <div class="mt-4 flex items-center">
+                    <a href="{% url 'posts:like' tweet.id %}" class="flex items-center text-gray-500 hover:text-red-500 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 {% if user in tweet.likes.all %}text-red-500 fill-current{% endif %}" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                            <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                        </svg>
+                        <span class="ml-1 text-sm">{{ tweet.likes.count }}</span>
+                    </a>
+                </div>
+                <form method="post" class="mt-2 flex gap-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="tweet_id" value="{{ tweet.id }}">
+                    <input type="text" name="content" placeholder="Escreva um comentário..." class="flex-1 text-sm border p-1 rounded">
+                    <button type="submit" class="text-xs bg-gray-200 px-2 py-1 rounded">Comentar</button>
+                </form>
+
+                <div class="mt-2 ml-4 border-l-2 pl-2">
+                    {% for comment in tweet.comments.all %}
+                        <p class="text-xs text-gray-600"><strong>@{{ comment.user.username }}:</strong> {{ comment.content }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center text-gray-500">Nenhum tweet ainda.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 border border-gray-200 rounded-lg shadow-sm">
+    <h2 class="text-2xl font-bold mb-6 text-center">Entrar no Twitter Clone</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="space-y-4">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="w-full bg-blue-500 text-white mt-6 py-2 rounded-full font-bold hover:bg-blue-600">
+            Entrar
+        </button>
+    </form>
+    <p class="mt-4 text-center text-sm text-gray-600">
+        Não tem conta? <a href="{% url 'users:signup' %}" class="text-blue-500 hover:underline">Cadastre-se</a>
+    </p>
+</div>
+
+<style>
+    input { width: 100%; border: 1px solid #e2e8f0; padding: 0.5rem; border-radius: 0.5rem; margin-top: 0.25rem; }
+</style>
+{% endblock %}
