@@ -18,12 +18,17 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views # O import que faltava!
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('posts.urls')),
     path('users/', include('users.urls')),
+    path('password-change/', auth_views.PasswordChangeView.as_view(
+        template_name='users/password_change.html',
+        success_url='/users/profile/'
+    ), name='password_change'),
 ]
 
-if settings.DEBUG or not settings.DEBUG:
+if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

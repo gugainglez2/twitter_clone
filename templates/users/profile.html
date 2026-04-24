@@ -1,21 +1,70 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="max-w-md mx-auto bg-white p-8 border border-gray-200 rounded-lg">
-    <h2 class="text-2xl font-bold mb-6">Editar Perfil</h2>
-    <form method="post" enctype="multipart/form-data"> {% csrf_token %}
-        <div class="space-y-4">
+<div class="max-w-2xl mx-auto bg-white p-8 border border-gray-200 rounded-lg shadow-sm">
+    <h2 class="text-2xl font-bold mb-6 text-gray-900">Configurações de Perfil</h2>
+    
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        
+        <div class="flex items-center space-x-4 mb-6 p-4 bg-gray-50 rounded-lg">
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" class="w-20 h-20 rounded-full object-cover border-2 border-blue-500">
+            {% else %}
+                <div class="w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
+                    {{ user.username|slice:":1"|upper }}
+                </div>
+            {% endif %}
+            <div>
+                <p class="text-sm font-medium text-gray-700">Foto de perfil</p>
+                <p class="text-xs text-gray-500">Clique abaixo para alterar</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4">
             {{ form.as_p }}
         </div>
-        <button type="submit" class="w-full bg-blue-500 text-white mt-6 py-2 rounded-full font-bold">
+
+        <button type="submit" class="w-full bg-blue-500 text-white mt-6 py-2 rounded-full font-bold hover:bg-blue-600 transition">
             Salvar Alterações
         </button>
     </form>
-    <hr class="my-6">
-    <a href="{% url 'posts:feed' %}" class="text-gray-500 hover:underline">Voltar para o Feed</a>
+
+    <div class="mt-8 pt-6 border-t border-gray-200">
+        <h3 class="font-bold text-lg mb-4 text-gray-900">Sua Rede Social</h3>
+        <div class="grid grid-cols-2 gap-4 text-center">
+            <div class="p-3 bg-blue-50 rounded-lg">
+                <span class="block font-bold text-xl text-blue-600">{{ user.following.count }}</span>
+                <span class="text-gray-600 text-xs uppercase tracking-wider">Seguindo</span>
+            </div>
+            <div class="p-3 bg-blue-50 rounded-lg">
+                <span class="block font-bold text-xl text-blue-600">{{ user.followers.count }}</span>
+                <span class="text-gray-600 text-xs uppercase tracking-wider">Seguidores</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-6 pt-6 border-t border-gray-200">
+        <a href="{% url 'password_change' %}" class="block text-center text-sm font-semibold text-blue-500 hover:text-blue-700">
+            🔒 Alterar Senha de Acesso
+        </a>
+    </div>
+
+    <div class="mt-8 text-center">
+        <a href="{% url 'posts:feed' %}" class="text-gray-400 hover:text-gray-600 text-sm">
+            ← Voltar para o Feed
+        </a>
+    </div>
 </div>
 
 <style>
-    input, textarea { width: 100%; border: 1px solid #e2e8f0; padding: 0.5rem; border-radius: 0.5rem; }
+    form p { margin-bottom: 1rem; }
+    input[type="text"], input[type="email"], textarea, input[type="file"] {
+        width: 100%;
+        padding: 0.6rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        margin-top: 0.25rem;
+    }
 </style>
 {% endblock %}
