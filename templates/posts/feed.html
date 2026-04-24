@@ -11,7 +11,7 @@
                     class="w-full p-2 border border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500" 
                     placeholder="O que está acontecendo?" required></textarea>
                 <div class="flex justify-end mt-2">
-                    <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-600">
+                    <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-600 transition">
                         Tweetar
                     </button>
                 </div>
@@ -31,9 +31,16 @@
                         {% endif %}
 
                         <div class="flex-1">
-                            <div class="flex items-center">
-                                <span class="font-bold text-gray-900">@{{ tweet.user.username }}</span>
-                                <span class="text-gray-500 text-sm ml-2">· {{ tweet.created_at|timesince }}</span>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold text-gray-900">@{{ tweet.user.username }}</span>
+                                    {% if tweet.user != user %}
+                                        <a href="{% url 'posts:follow' tweet.user.username %}" class="ml-2 text-xs font-bold {% if tweet.user in user.following.all %}text-red-500{% else %}text-blue-500{% endif %} hover:underline">
+                                            {% if tweet.user in user.following.all %}[Deixar de seguir]{% else %}[Seguir]{% endif %}
+                                        </a>
+                                    {% endif %}
+                                    <span class="text-gray-500 text-sm ml-2">· {{ tweet.created_at|timesince }}</span>
+                                </div>
                             </div>
                             
                             <p class="mt-2 text-gray-800">{{ tweet.content }}</p>
@@ -67,31 +74,32 @@
                     </div>
                 </div>
             {% empty %}
-                <p class="text-center text-gray-500 py-10 bg-white rounded-lg border border-dashed border-gray-300">
-                    Seu feed está vazio. Siga alguém na barra lateral!
-                </p>
+                <div class="text-center text-gray-500 py-10 bg-white rounded-lg border border-dashed border-gray-300">
+                    <p>Seu feed está vazio.</p>
+                    <p class="text-sm">Siga alguém para ver as postagens aqui!</p>
+                </div>
             {% endfor %}
         </div>
     </div>
 
     <div class="w-full md:w-72">
         <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 sticky top-4">
-            <h3 class="font-bold text-lg mb-4 text-gray-900">Sugestões para você</h3>
+            <h3 class="font-bold text-lg mb-4 text-gray-900">Sugestões</h3>
             <div class="space-y-4">
                 {% for suggest in suggestions %}
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold mr-2">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold mr-2 text-blue-600">
                                 {{ suggest.username|slice:":1"|upper }}
                             </div>
                             <span class="text-sm font-semibold text-gray-700">@{{ suggest.username }}</span>
                         </div>
-                        <a href="{% url 'posts:follow' suggest.username %}" class="text-xs bg-gray-900 text-white px-4 py-1 rounded-full font-bold hover:bg-gray-700">
+                        <a href="{% url 'posts:follow' suggest.username %}" class="text-xs bg-gray-900 text-white px-4 py-1 rounded-full font-bold hover:bg-gray-700 transition">
                             Seguir
                         </a>
                     </div>
                 {% empty %}
-                    <p class="text-xs text-gray-500">Você já segue todo mundo!</p>
+                    <p class="text-xs text-gray-500">Nenhuma sugestão no momento.</p>
                 {% endfor %}
             </div>
         </div>
