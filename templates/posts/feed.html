@@ -1,61 +1,100 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto">
-    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
-        <form method="post">
-            {% csrf_token %}
-            <textarea name="content" rows="3" 
-                class="w-full p-2 border border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500" 
-                placeholder="O que está acontecendo?" required></textarea>
-            <div class="flex justify-end mt-2">
-                <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-600">
-                    Tweetar
-                </button>
-            </div>
-        </form>
-    </div>
+<div class="max-w-4xl mx-auto flex flex-col md:flex-row gap-6">
+    
+    <div class="flex-1">
+        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
+            <form method="post">
+                {% csrf_token %}
+                <textarea name="content" rows="3" 
+                    class="w-full p-2 border border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500" 
+                    placeholder="O que está acontecendo?" required></textarea>
+                <div class="flex justify-end mt-2">
+                    <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-600">
+                        Tweetar
+                    </button>
+                </div>
+            </form>
+        </div>
 
-    <div class="space-y-4">
-        {% for tweet in tweets %}
-            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <span class="font-bold text-gray-900">@{{ tweet.user.username }}</span>
-                        {% if tweet.user != user %}
-                            <a href="{% url 'posts:follow' tweet.user.username %}" class="ml-2 text-xs font-semibold {% if tweet.user in user.following.all %}text-red-500{% else %}text-blue-500{% endif %} hover:underline">
-                                {% if tweet.user in user.following.all %}[Parar de seguir]{% else %}[Seguir]{% endif %}
-                            </a>
+        <div class="space-y-4">
+            {% for tweet in tweets %}
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                    <div class="flex items-start">
+                        {% if tweet.user.profile_picture %}
+                            <img src="{{ tweet.user.profile_picture.url }}" class="w-10 h-10 rounded-full mr-3 object-cover border border-gray-100">
+                        {% else %}
+                            <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold mr-3">
+                                {{ tweet.user.username|slice:":1"|upper }}
+                            </div>
                         {% endif %}
-                        <span class="text-gray-500 text-sm">· {{ tweet.created_at|timesince }}</span>
-                        <p class="mt-2 text-gray-800">{{ tweet.content }}</p>
+
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <span class="font-bold text-gray-900">@{{ tweet.user.username }}</span>
+                                <span class="text-gray-500 text-sm ml-2">· {{ tweet.created_at|timesince }}</span>
+                            </div>
+                            
+                            <p class="mt-2 text-gray-800">{{ tweet.content }}</p>
+
+                            <div class="mt-4 flex items-center">
+                                <a href="{% url 'posts:like' tweet.id %}" class="flex items-center text-gray-500 hover:text-red-500 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 {% if user in tweet.likes.all %}text-red-500 fill-current{% endif %}" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                                        <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                                    </svg>
+                                    <span class="ml-1 text-sm">{{ tweet.likes.count }}</span>
+                                </a>
+                            </div>
+
+                            <div class="mt-4 border-t pt-2">
+                                <form method="post" class="flex gap-2 mb-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="tweet_id" value="{{ tweet.id }}">
+                                    <input type="text" name="content" placeholder="Comentar..." class="flex-1 text-sm border p-1 px-2 rounded-full bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-400">
+                                    <button type="submit" class="text-xs font-bold text-blue-500">Enviar</button>
+                                </form>
+
+                                <div class="space-y-2">
+                                    {% for comment in tweet.comments.all %}
+                                        <p class="text-xs text-gray-600">
+                                            <span class="font-bold">@{{ comment.user.username }}:</span> {{ comment.content }}
+                                        </p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="mt-4 flex items-center">
-                    <a href="{% url 'posts:like' tweet.id %}" class="flex items-center text-gray-500 hover:text-red-500 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 {% if user in tweet.likes.all %}text-red-500 fill-current{% endif %}" viewBox="0 0 20 20" fill="none" stroke="currentColor">
-                            <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
-                        </svg>
-                        <span class="ml-1 text-sm">{{ tweet.likes.count }}</span>
-                    </a>
-                </div>
-                <form method="post" class="mt-2 flex gap-2">
-                    {% csrf_token %}
-                    <input type="hidden" name="tweet_id" value="{{ tweet.id }}">
-                    <input type="text" name="content" placeholder="Escreva um comentário..." class="flex-1 text-sm border p-1 rounded">
-                    <button type="submit" class="text-xs bg-gray-200 px-2 py-1 rounded">Comentar</button>
-                </form>
+            {% empty %}
+                <p class="text-center text-gray-500 py-10 bg-white rounded-lg border border-dashed border-gray-300">
+                    Seu feed está vazio. Siga alguém na barra lateral!
+                </p>
+            {% endfor %}
+        </div>
+    </div>
 
-                <div class="mt-2 ml-4 border-l-2 pl-2">
-                    {% for comment in tweet.comments.all %}
-                        <p class="text-xs text-gray-600"><strong>@{{ comment.user.username }}:</strong> {{ comment.content }}</p>
-                    {% endfor %}
-                </div>
+    <div class="w-full md:w-72">
+        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 sticky top-4">
+            <h3 class="font-bold text-lg mb-4 text-gray-900">Sugestões para você</h3>
+            <div class="space-y-4">
+                {% for suggest in suggestions %}
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold mr-2">
+                                {{ suggest.username|slice:":1"|upper }}
+                            </div>
+                            <span class="text-sm font-semibold text-gray-700">@{{ suggest.username }}</span>
+                        </div>
+                        <a href="{% url 'posts:follow' suggest.username %}" class="text-xs bg-gray-900 text-white px-4 py-1 rounded-full font-bold hover:bg-gray-700">
+                            Seguir
+                        </a>
+                    </div>
+                {% empty %}
+                    <p class="text-xs text-gray-500">Você já segue todo mundo!</p>
+                {% endfor %}
             </div>
-        {% empty %}
-            <p class="text-center text-gray-500">Nenhum tweet ainda.</p>
-        {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}

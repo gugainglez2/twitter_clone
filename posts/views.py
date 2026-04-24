@@ -1,9 +1,6 @@
-from urllib import request
-from xml.etree.ElementTree import Comment
-
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Tweet
+from .models import Tweet, Comment
 from users.models import User
 
 @login_required
@@ -19,10 +16,19 @@ def feed(request):
             Tweet.objects.create(user=request.user, content=content)
         return redirect('posts:feed')
 
+    # Tweets de quem eu sigo + os meus, do mais novo para o mais antigo
     user_and_following = list(request.user.following.all()) + [request.user]
-    tweets = Tweet.objects.filter(user__in=user_and_following)
+    tweets = Tweet.objects.filter(user__in=user_and_following).order_by('-created_at')
     
-    return render(request, 'posts/feed.html', {'tweets': tweets})
+    # Sugestões: Pega 5 usuários que eu ainda NÃO sigo e que não sou eu
+    suggestions = User.objects.exclude(
+        id__in=[u.id for u in user_and_following]
+    ).exclude(id=request.user.id)[:5]
+    
+    return render(request, 'posts/feed.html', {
+        'tweets': tweets, 
+        'suggestions': suggestions
+    })
 
 @login_required
 def follow_user(request, username):
