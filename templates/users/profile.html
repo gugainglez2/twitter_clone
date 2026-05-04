@@ -15,6 +15,11 @@
                     {{ user.username|slice:":1"|upper }}
                 </div>
             {% endif %}
+            <!-- {% if user.profile.image %}
+                <img class="w-20 h-20 rounded-full" src="{{ user.profile.image.url }}" alt="Foto de Perfil">
+            {% else %}
+                <img class="w-20 h-20 rounded-full" src="{% static 'images/default_profile.png' %}" alt="Padrão">
+            {% endif %} -->
             <div>
                 <p class="text-sm font-medium text-gray-700">Foto de perfil</p>
                 <p class="text-xs text-gray-500">Clique abaixo para alterar</p>

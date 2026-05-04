@@ -26,8 +26,8 @@ ALLOWED_HOSTS = ['*']
 # --- DEFINIÇÃO DE APLICATIVOS ---
 INSTALLED_APPS = [
     'cloudinary_storage',
-    'cloudinary',
     'django.contrib.staticfiles',
+    'cloudinary',
     'rest_framework',
     'users',
     'posts',
@@ -40,9 +40,9 @@ INSTALLED_APPS = [
 
 # --- CONFIGURAÇÃO CLOUDINARY ---
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
-    'API_KEY': os.getenv('API_KEY'),
-    'API_SECRET': os.getenv('API_SECRET'),
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET')
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
