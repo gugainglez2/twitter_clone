@@ -45,6 +45,7 @@ CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUD_NAME'),
     'API_KEY': os.environ.get('API_KEY'),
     'API_SECRET': os.environ.get('API_SECRET'),
+    'SECURE': True,
 }
 
 MIDDLEWARE = [
@@ -96,7 +97,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # --- ARQUIVOS DE MÍDIA ---
-MEDIA_URL = '/media/'
+MEDIA_URL = 'https://res.cloudinary.com/dpoptwxfd/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = 'users.User'
