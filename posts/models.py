@@ -5,7 +5,6 @@ class Tweet(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="tweets")
     content = models.TextField(max_length=280)
     created_at = models.DateTimeField(auto_now_add=True)
-    # Relação de curtidas: um usuário pode curtir vários tweets e vice-versa
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_tweets", blank=True)
 
     class Meta:
@@ -22,10 +21,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.user.username} on {self.tweet.id}"
-
-class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
-
-    def __str__(self):
-        return f'{self.user.username} Profile'

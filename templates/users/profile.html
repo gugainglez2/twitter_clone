@@ -9,17 +9,12 @@
         
         <div class="flex items-center space-x-4 mb-6 p-4 bg-gray-50 rounded-lg">
             {% if user.profile_picture %}
-                <img src="{{ user.profile_picture.url }}" class="w-20 h-20 rounded-full object-cover border-2 border-blue-500">
+                <img src="{{ user.profile_picture.url }}" alt="Foto de Perfil" class="w-20 h-20 rounded-full object-cover border-2 border-blue-500">
             {% else %}
                 <div class="w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold">
                     {{ user.username|slice:":1"|upper }}
                 </div>
             {% endif %}
-            <!-- {% if user.profile.image %}
-                <img class="w-20 h-20 rounded-full" src="{{ user.profile.image.url }}" alt="Foto de Perfil">
-            {% else %}
-                <img class="w-20 h-20 rounded-full" src="{% static 'images/default_profile.png' %}" alt="Padrão">
-            {% endif %} -->
             <div>
                 <p class="text-sm font-medium text-gray-700">Foto de perfil</p>
                 <p class="text-xs text-gray-500">Clique abaixo para alterar</p>
