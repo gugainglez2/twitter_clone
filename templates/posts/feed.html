@@ -23,7 +23,9 @@
                 <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                     <div class="flex items-start">
                         {% if tweet.user.profile_picture %}
-                            <img src="{{ tweet.user.profile_picture.url }}" class="w-10 h-10 rounded-full mr-3 object-cover border border-gray-100">
+                            <img src="{{ tweet.user.profile_picture|replace:'/upload/','/upload/w_50,h_50,c_fill,g_face/' }}" 
+                                alt="{{ tweet.user.username }}" 
+                                class="w-10 h-10 rounded-full mr-3 object-cover border border-gray-100">
                         {% else %}
                             <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold mr-3">
                                 {{ tweet.user.username|slice:":1"|upper }}
@@ -33,7 +35,12 @@
                         <div class="flex-1">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <span class="font-bold text-gray-900">@{{ tweet.user.username }}</span>
+                                    <span class="font-bold text-gray-900">
+                                        <a href="{% url 'users:user_profile' tweet.user.username %}" class="hover:underline">
+                                            @{{ tweet.user.username }}
+                                        </a>
+                                    </span>
+
                                     {% if tweet.user != user %}
                                         <a href="{% url 'posts:follow' tweet.user.username %}" class="ml-2 text-xs font-bold {% if tweet.user in user.following.all %}text-red-500{% else %}text-blue-500{% endif %} hover:underline">
                                             {% if tweet.user in user.following.all %}[Deixar de seguir]{% else %}[Seguir]{% endif %}
@@ -64,9 +71,18 @@
 
                                 <div class="space-y-2">
                                     {% for comment in tweet.comments.all %}
-                                        <p class="text-xs text-gray-600">
-                                            <span class="font-bold">@{{ comment.user.username }}:</span> {{ comment.content }}
-                                        </p>
+                                        <div class="flex items-center gap-2 text-xs text-gray-600">
+                                            {% if comment.user.profile_picture %}
+                                                <img src="{{ comment.user.profile_picture|replace:'/upload/','/upload/w_24,h_24,c_fill,g_face/' }}" 
+                                                    alt="{{ comment.user.username }}" 
+                                                    class="w-6 h-6 rounded-full object-cover border border-gray-200">
+                                            {% else %}
+                                                <div class="w-6 h-6 rounded-full bg-blue-400 flex items-center justify-center text-white text-[10px] font-bold">
+                                                    {{ comment.user.username|slice:":1"|upper }}
+                                                </div>
+                                            {% endif %}
+                                            <span class="font-bold">@{{ comment.user.username }}</span>: {{ comment.content }}
+                                        </div>
                                     {% endfor %}
                                 </div>
                             </div>
@@ -87,16 +103,46 @@
             <h3 class="font-bold text-lg mb-4 text-gray-900">Sugestões</h3>
             <div class="space-y-4">
                 {% for suggest in suggestions %}
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between group relative">
                         <div class="flex items-center">
-                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold mr-2 text-blue-600">
-                                {{ suggest.username|slice:":1"|upper }}
-                            </div>
-                            <span class="text-sm font-semibold text-gray-700">@{{ suggest.username }}</span>
+                            {% if suggest.profile_picture %}
+                                <img src="{{ suggest.profile_picture|replace:'/upload/','/upload/w_40,h_40,c_fill,g_face/' }}" 
+                                    alt="{{ suggest.username }}" 
+                                    class="w-8 h-8 rounded-full mr-2 object-cover border border-gray-200">
+                            {% else %}
+                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold mr-2 text-blue-600">
+                                    {{ suggest.username|slice:":1"|upper }}
+                                </div>
+                            {% endif %}
+                            <span class="text-sm font-semibold text-gray-700">
+                                <a href="{% url 'users:user_profile' suggest.username %}" class="hover:underline">
+                                    @{{ suggest.username }}
+                                </a>
+                            </span>
                         </div>
                         <a href="{% url 'posts:follow' suggest.username %}" class="text-xs bg-gray-900 text-white px-4 py-1 rounded-full font-bold hover:bg-gray-700 transition">
                             Seguir
                         </a>
+
+                        <!-- Hover card -->
+                        <div class="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg p-3 opacity-0 group-hover:opacity-100 transition duration-200 z-10">
+                            <div class="flex items-center mb-2">
+                                {% if suggest.profile_picture %}
+                                    <img src="{{ suggest.profile_picture|replace:'/upload/','/upload/w_80,h_80,c_fill,g_face/' }}" 
+                                        alt="{{ suggest.username }}" 
+                                        class="w-12 h-12 rounded-full object-cover border border-gray-200 mr-2">
+                                {% else %}
+                                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-lg font-bold text-blue-600 mr-2">
+                                        {{ suggest.username|slice:":1"|upper }}
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <p class="font-bold text-gray-900">@{{ suggest.username }}</p>
+                                    <p class="text-xs text-gray-500">Clique para ver perfil</p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600">{{ suggest.bio|default:"Sem bio disponível" }}</p>
+                        </div>
                     </div>
                 {% empty %}
                     <p class="text-xs text-gray-500">Nenhuma sugestão no momento.</p>

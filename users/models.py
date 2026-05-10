@@ -3,7 +3,7 @@ from django.db import models
 
 class User(AbstractUser):
     bio = models.TextField(max_length=500, blank=True)
-    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    profile_picture = models.URLField(blank=True, null=True)
     
     following = models.ManyToManyField(
         "self", 

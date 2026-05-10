@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import User
 from django.contrib.auth.decorators import login_required
 from .forms import UserProfileForm
+from django.shortcuts import render, get_object_or_404, redirect
 
 class SignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
@@ -24,13 +25,20 @@ def signup(request):
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=request.user)
+        form = UserProfileForm(request.POST, instance=request.user)
         if form.is_valid():
-            user = form.save(commit=False)
-            if 'profile_picture' in request.FILES:
-                user.profile_picture = request.FILES['profile_picture']
-            user.save()
+            form.save()
             return redirect('posts:feed')
     else:
         form = UserProfileForm(instance=request.user)
     return render(request, 'users/profile.html', {'form': form})
+
+@login_required
+def user_profile(request, username):
+    profile_user = get_object_or_404(User, username=username)
+    is_following = profile_user in request.user.following.all()
+
+    return render(request, 'users/user_profile.html', {
+        'profile_user': profile_user,
+        'is_following': is_following
+    })

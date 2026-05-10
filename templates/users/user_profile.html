@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-8 border border-gray-200 rounded-lg shadow-sm">
+    <div class="flex items-center space-x-6">
+        {% if profile_user.profile_picture %}
+            <img src="{{ profile_user.profile_picture|replace:'/upload/','/upload/w_300,h_300,c_fill,g_face/' }}" 
+                 alt="{{ profile_user.username }}" 
+                 class="w-32 h-32 rounded-full object-cover border-4 border-blue-500">
+        {% else %}
+            <div class="w-32 h-32 rounded-full bg-blue-500 flex items-center justify-center text-white text-4xl font-bold">
+                {{ profile_user.username|slice:":1"|upper }}
+            </div>
+        {% endif %}
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900">@{{ profile_user.username }}</h2>
+            <p class="text-gray-600 mt-2">{{ profile_user.bio|default:"Este usuário ainda não escreveu uma bio." }}</p>
+            
+            {% if profile_user != user %}
+                <a href="{% url 'posts:follow' profile_user.username %}" 
+                   class="mt-4 inline-block px-6 py-2 rounded-full font-bold text-white 
+                          {% if is_following %}bg-red-500 hover:bg-red-600{% else %}bg-blue-500 hover:bg-blue-600{% endif %}">
+                    {% if is_following %}Deixar de seguir{% else %}Seguir{% endif %}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-8 grid grid-cols-2 gap-4 text-center">
+        <div class="p-3 bg-blue-50 rounded-lg">
+            <span class="block font-bold text-xl text-blue-600">{{ profile_user.following.count }}</span>
+            <span class="text-gray-600 text-xs uppercase tracking-wider">Seguindo</span>
+        </div>
+        <div class="p-3 bg-blue-50 rounded-lg">
+            <span class="block font-bold text-xl text-blue-600">{{ profile_user.followers.count }}</span>
+            <span class="text-gray-600 text-xs uppercase tracking-wider">Seguidores</span>
+        </div>
+    </div>
+
+    <div class="mt-8 border-t pt-6">
+        <h3 class="font-bold text-lg mb-4 text-gray-900">Tweets de @{{ profile_user.username }}</h3>
+        <div class="space-y-4">
+            {% for tweet in profile_user.tweets.all %}
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <p class="text-gray-800">{{ tweet.content }}</p>
+                    <span class="text-xs text-gray-500">· {{ tweet.created_at|timesince }}</span>
+                </div>
+            {% empty %}
+                <p class="text-sm text-gray-500">Este usuário ainda não postou nada.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
