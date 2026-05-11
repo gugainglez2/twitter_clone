@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load custom_filters %}
 
 {% block content %}
 <div class="max-w-2xl mx-auto bg-white p-8 border border-gray-200 rounded-lg shadow-sm">
@@ -9,7 +10,7 @@
         
         <div class="flex items-center space-x-4 mb-6 p-4 bg-gray-50 rounded-lg">
             {% if user.profile_picture %}
-                <img src="{{ user.profile_picture|replace:'/upload/','/upload/w_300,h_300,c_fill,g_face/' }}" 
+                <img src="{{ user.profile_picture|replace:'/upload/,/upload/w_300,h_300,c_fill,g_face/' }}" 
                     alt="Foto de Perfil" 
                     class="w-20 h-20 rounded-full object-cover border-2 border-blue-500">
             {% else %}
