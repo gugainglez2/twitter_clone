@@ -10,7 +10,7 @@
         
         <div class="flex items-center space-x-4 mb-6 p-4 bg-gray-50 rounded-lg">
             {% if user.profile_picture %}
-                <img src="{{ user.profile_picture|replace:'/upload/,/upload/w_300,h_300,c_fill,g_face/' }}" 
+                <img src="{{ user.profile_picture.url|replace:'/upload/,/upload/w_300,h_300,c_fill,g_face/' }}"
                     alt="Foto de Perfil" 
                     class="w-20 h-20 rounded-full object-cover border-2 border-blue-500">
             {% else %}
@@ -25,9 +25,8 @@
         </div>
 
         <div class="grid grid-cols-1 gap-4">
+            {% csrf_token %}
             {{ form.as_p }}
-            <!-- Campo de upload substituído -->
-            <input type="file" id="fileInput" accept="image/*">
         </div>
 
         <button type="submit" class="w-full bg-blue-500 text-white mt-6 py-2 rounded-full font-bold hover:bg-blue-600 transition">
